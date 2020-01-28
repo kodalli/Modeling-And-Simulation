@@ -12,15 +12,15 @@ def generateSeed():
 
 
 def laggedFibonacciGenerator(seed=None, num_gen=10):
-    output = []
+    output = np.zeros(num_gen)
     i, j, k = 3, 7, 13
 
     if(seed == None):
         seed = generateSeed()
 
-    for _ in range(num_gen):
+    for count in range(num_gen):
         rand_num = (seed[i] + seed[j] + seed[k]) % 10
-        output.append((rand_num))
+        output[count] = rand_num
         seed.pop(0)
         seed = seed + [rand_num]
         # print(seed)
@@ -33,4 +33,5 @@ def p1(size=None, method='NR', seed=None, returnSeed=False):
 
 
 if __name__ == "__main__":
-    temp1 = laggedFibonacciGenerator(num_gen=1000000)
+    temp1 = laggedFibonacciGenerator(num_gen=20)
+    print(temp1)
