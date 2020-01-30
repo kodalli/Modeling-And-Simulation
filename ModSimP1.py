@@ -107,11 +107,15 @@ def p1(size=None, method='NR', seed=None, returnSeed=False):
         return output
 
 if __name__ == "__main__":
-
     rand = p1(method='LFG', size =(15,3))
-    print(rand.shape)
-    print(rand)
+    # print(rand.shape)
+    # print(rand)
 
     # plt.hist(rand)
     # plt.show()
-    # Axes3D.plot_surface(X, Y, Z, *args, **kwargs)
+    X = rand[:,0]
+    Y = rand[:,1]
+    Z = rand[:,2]
+    print(X)
+    Axes3D.scatter(X,Y,Z)
+    plt.show()
