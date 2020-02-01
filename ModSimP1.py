@@ -209,6 +209,6 @@ def graph2DCircle(rand, title):
 
 
 if __name__ == "__main__":
-    rand, seed = p1(method='NR', size=(200, 3), returnSeed=True)
-    graph3D(rand, title='NR')
-    pi_est = p2(nThrows=300, method='NR')
+    rand, seed = p1(method='LFG', size=(5000, 3), returnSeed=True)
+    graph3D(rand, title='LFG')
+    pi_est = p2(nThrows=5000, method='LFG')
