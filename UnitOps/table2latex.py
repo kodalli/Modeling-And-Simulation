@@ -44,7 +44,7 @@ def table2Latex(fileName='input_latex_table.txt', fileOut='output_latex_table.tx
         if firstLine and dblLine:
 
             dblUnderline = ""
-            for j in range(numCols):
+            for _ in range(numCols):
                 dblUnderline = dblUnderline + '|='
             dblUnderline = dblUnderline + '|'
 
@@ -68,7 +68,7 @@ def table2Latex(fileName='input_latex_table.txt', fileOut='output_latex_table.tx
     newFile.write('\\label{insert label here}\n')
 
     colProp = ""
-    for i in range(numCols):
+    for _ in range(numCols):
         colProp = colProp + '|c'
     colProp = colProp + '|'
 

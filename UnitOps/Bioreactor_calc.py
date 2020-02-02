@@ -150,9 +150,9 @@ def plotLogOD():
     fig, ax = plt.subplots(1)
     ax.plot(x, y)
     ax.scatter(time[1:-3], np.log(optical_density[1:-3]))
-    ax.set_title(flask)
+    # ax.set_title(flask)
     ax.set_xlabel('Time (hrs)')
-    ax.set_ylabel('log(Optical Density)')
+    ax.set_ylabel('log(OD600)')
     # ax.set_ylim(ymin=0)
     # ax.set_xlim(xmin=-0.1)
     ax.set_axisbelow(True)
@@ -163,9 +163,9 @@ def plotLogOD():
 def plotOD():
     fig, ax = plt.subplots(1)
     ax.scatter(time, optical_density)
-    ax.set_title(flask)
+    # ax.set_title(flask)
     ax.set_xlabel('Time (hrs)')
-    ax.set_ylabel('Optical Density')
+    ax.set_ylabel('OD600')
     # ax.set_ylim(ymin=0)
     # ax.set_xlim(xmin=-0.1)
     ax.set_axisbelow(True)
@@ -178,7 +178,7 @@ def plotMassConc():
     ax.scatter(time, mass_concentration)
     ax.set_xlabel('Time (hrs)')
     ax.set_ylabel('Cell Mass Conc. (g/L)')
-    ax.set_title(flask)
+    # ax.set_title(flask)
     # exponential curve plot
     i = 0
     x = []
@@ -204,15 +204,15 @@ def plotMichaelis():
     ax.scatter(time, mmList)
     ax.set_xlabel('Time (hrs)')
     ax.set_ylabel('Cell Mass Conc. (g/L)')
-    ax.set_title(flask)
+    # ax.set_title(flask)
     ax.set_axisbelow(True)
     plt.grid()
     plt.show(fig)
 
 
-# plotOD()
-# plotLogOD()
-# plotMassConc()
-# plotMichaelis()
-
-printVals()
+if __name__ == "__main__":
+    plotOD()
+    plotLogOD()
+    plotMassConc()
+    plotMichaelis()
+    # printVals()
