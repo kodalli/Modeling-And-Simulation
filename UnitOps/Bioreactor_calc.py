@@ -1,3 +1,8 @@
+'''
+    Bioreactor calculations and graph generation
+    Created by: Surya Kodali
+'''
+
 import pandas as pd
 import numpy as np
 import os
@@ -6,10 +11,11 @@ from scipy.stats import linregress
 from scipy.optimize import fsolve
 from scipy.optimize import curve_fit
 
-root = r'G:\PyScripts\CBE\CBE\UnitOps'
+root = r'UnitOps'
 name = r'BR_all_data_copy.xlsx'
-file_name = os.path.join(root, name)
-flask = 'flask4'
+# file_name = os.path.join(root, name)
+file_name = r'BR_all_data_copy.xlsx'
+flask = 'flask1'
 df = pd.read_excel(file_name, sheet_name=flask)
 # print(df)
 # print(df.iloc[0])  # gives first row
@@ -87,11 +93,12 @@ popt, pcov = curve_fit(
     func, time[:-3], mass_concentration[:-3], p0=(0.5, 1e-6))
 a = popt[0]  # estimate coefficients
 b = popt[1]
-print(a, '* exp(', b, '*t )')
+print('X(t) =', a, '* exp(', b, '*t )')
 c = a*b
 # slope of um is the last point of the exponential phase
 um = c*np.exp(b*time[-1])
-print('um =', um)
+print('Xprime(t) =',c , '* exp(',b, '*t)')
+print('um =', um, 'time =', time[-1])
 u_star = um/2
 print('u* =', u_star)
 t_star = 1/b * np.log(u_star/c)
@@ -124,14 +131,16 @@ for i in time:
 
 def printVals():
     print('dilution factor:')
-    for x in range(len(dilution_factor)):
-        print(dilution_factor[x])
+    for x in dilution_factor:
+        print(x)
     print('optical density:')
-    for x in range(len(optical_density)):
-        print(optical_density[x])
+    for x in optical_density:
+        print(x)
     print('mass concentration:')
-    for x in range(len(mass_concentration)):
-        print(mass_concentration[x])
+    for x in mass_concentration:
+        print(x)
+    for x in mmList:
+        print(x)
 
 
 def plotLogOD():
@@ -200,12 +209,13 @@ def plotMassConc():
 
 def plotMichaelis():
     fig, ax = plt.subplots(1)
-    ax.scatter(time, mass_concentration)
-    ax.scatter(time, mmList)
+    ax.scatter(time, mass_concentration, label = 'Mass conc.')
+    ax.scatter(time, mmList, label = 'Michaelis-Menten')
     ax.set_xlabel('Time (hrs)')
     ax.set_ylabel('Cell Mass Conc. (g/L)')
     # ax.set_title(flask)
     ax.set_axisbelow(True)
+    ax.legend(loc = 'upper left')
     plt.grid()
     plt.show(fig)
 
@@ -215,4 +225,4 @@ if __name__ == "__main__":
     plotLogOD()
     plotMassConc()
     plotMichaelis()
-    # printVals()
+    printVals()

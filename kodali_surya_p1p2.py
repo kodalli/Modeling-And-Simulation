@@ -23,15 +23,6 @@ def laggedFibonacciGenerator(seed=None, num_gen=10):
     if(seed == None):
         seed = generateSeed()
 
-<<<<<<< Updated upstream:ModSimP1.py
-    for count in range(num_gen):
-        rand_num = (seed[i] + seed[j] + seed[k]) % 10
-        output[count] = rand_num
-        seed.pop(0)
-        seed = seed + [rand_num]
-        # print(seed)
-    return output
-=======
     if(method == 'LFG'):
         output = laggedFibonacciGenerator(size, seed)
 
@@ -93,7 +84,6 @@ def graph3D(rand, title):
 
     plt.show()
 
->>>>>>> Stashed changes:kodali_surya_p1p2.py
 
 
 def p1(size=None, method='NR', seed=None, returnSeed=False):
@@ -102,10 +92,6 @@ def p1(size=None, method='NR', seed=None, returnSeed=False):
 
 
 if __name__ == "__main__":
-<<<<<<< Updated upstream:ModSimP1.py
-    temp1 = laggedFibonacciGenerator(num_gen=20)
-    print(temp1)
-=======
     method = 'LFG'
     rand, seed = p1(method=method, size=(5000, 3), returnSeed=True)
     print('seed =', seed)
@@ -123,4 +109,3 @@ if __name__ == "__main__":
     # print(seeds)
     # ar_seeds = np.asarray(seeds)
     # graph3D(ar_seeds, 'seeds')
->>>>>>> Stashed changes:kodali_surya_p1p2.py
