@@ -1,0 +1,20 @@
+\begin{table}[htbp]
+\centering
+\caption{insert caption here}
+\label{insert label here}
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+Time (hrs)&Volume of Cells (µL)&Volume of Water (µL)&Dilution Factor&Spec. Reading&Actual OD&Cell Mass Conc. (g/L)&Glucose Conc. (g/L) \\ \hline
+0.000&125&875&8&0.481&3.848&0.231&250 \\ \hline
+0.100&125&875&8&0.540&4.320&0.259& \\ \hline
+0.217&125&1,000&9&0.529&4.761&0.286& \\ \hline
+0.317&125&1,000&9&0.525&4.725&0.284& \\ \hline
+0.417&125&1,000&9&0.573&5.157&0.309& \\ \hline
+0.517&125&1,000&9&0.538&4.842&0.291& \\ \hline
+0.600&125&1,000&9&0.555&4.995&0.300& \\ \hline
+0.817&125&1,250&11&0.507&5.577&0.335& \\ \hline
+0.967&125&1,250&11&0.472&5.192&0.312& \\ \hline
+1.100&125&1,250&11&0.488&5.368&0.322& \\ \hline
+1.250&125&1,250&11&0.505&5.555&0.333& \\ \hline
+\end{tabular}
+\end{table}
