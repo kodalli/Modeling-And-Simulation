@@ -1,23 +1,20 @@
 '''
     ModSim 5790 P3: Pendulum
     Created by: Surya Kodali
+    Additional help: scipy, matplotlib, numpy documentation, and stackoverflow
+    Description: This program takes in user parameters and displays the 
+    motion of both a simple harmonic oscillator and an actual pendulum 
+    using the anlytical solution and numerical integration.
 '''
 
 import numpy as np 
 import scipy.integrate as integrate
 import matplotlib.pyplot as plt 
+import matplotlib.animation as animation
+import time
+import math
 
-
-def choirBoy(t, y):
-    return
-
-def hooligan(t, y, mu, g, L):
-    theta, w = y[0], y[1]
-    # print(mu, g, L)
-    dy = np.array(w, -mu * w - g * np.sin(theta) / L)
-    return (dy)
-    
-def pendulum(thetaZero=30.0, damp=0.0, timeSpan=20.0, length=0.45, gravity=9.80, wZero=0.0):
+def pendulum(thetaZero=30.0, damp=0.0, timeSpan=20.0, length=0.45, gravity=9.8, wZero=0.0):
     ''' ___________________________________________________________________________________
         All input parameters are of type float.
         thetaZero: initial displacement angle (degrees)
@@ -43,29 +40,82 @@ def pendulum(thetaZero=30.0, damp=0.0, timeSpan=20.0, length=0.45, gravity=9.80,
         3. d(theta)/dt = w                          theta(0) = theta0
            dw/dt = -mu * w - g * sin(theta)/L       w(0) = w0
            
-           let y be the a 3x1 matrix of the original dependent variables
-           theta and w. dy/dt is 3x1 matrix of the system of ODEs.
-           y(0) = [thetaZero, wZero]
+           let y be a 1x2 matrix of the dependent variables
+           theta and w. dy/dt is 1x2 matrix of the system of ODEs,
+           with initial conditions y(0) = [thetaZero, wZero]
         ___________________________________________________________________________________
     '''
+    # analytical solution for the motion of a pendulum with assumptions
+    def choirBoy(theta0, t):
+        return [theta0 * math.cos(math.sqrt(gravity * item / length)) for item in t]
+    
+    # jacobian 2x2 matrix for numerical solution
+    def jacob(t, y):
+        return [[0,1],[-gravity * math.cos(y[0]) / length, -damp]]
+
+    # system of ordinary differential equations for the motion of a pendulum
+    def hooligan(t, y):
+        return [y[1], -damp * y[1] - gravity * math.sin(y[0]) / length]
+
+    # check if parameters are negative
+    if(thetaZero<0 or damp<0 or timeSpan<0 or length<0 or gravity<0 or wZero<0):
+        raise Exception('Cannot enter a negative value!')
+    
     # converts to radians
     thetaRad = np.radians(thetaZero)
     wRad = np.radians(wZero)
+    
     # creates time range with increments
-    time = np.linspace(0,timeSpan, 100)
-    # assigns damp, gravity, and length to be used outside of scope
-    mu_global, g_global, L_global = damp, gravity, length
-    # gets solution for initial value problem for our system, args* was not working
-    res = integrate.solve_ivp(fun=lambda t, y: hooligan(t, y, damp, gravity, length), t_span=(0, timeSpan), y0=(thetaRad,wRad), t_eval=time)
-    displayMotion(res)
+    t = np.arange(0,timeSpan, 1/60)
+    
+    # solves system of odes with Radau method and jacobian passed through
+    res1 = integrate.solve_ivp(fun=hooligan, t_span=[np.min(t), np.max(t)], y0=[thetaRad, wRad], 
+                               t_eval=t, method='Radau', jac=jacob)
+    
+    # res2 is analytical solution
+    res2 = choirBoy(thetaRad, res1.t)
+    displayMotion(res1, res2, timeSpan, length)
 
-def displayMotion(res):
-    plt.plot(res.t, np.degrees(res.y[0]))
-    plt.plot(res.t, np.degrees(res.y[1]))
-    plt.xlabel('time')
-    plt.ylabel('angle or angluar velocity')
+def displayMotion(res1, res2, timeSpan, length):
+    '''
+        displayMotion takes the results of the two methods of 
+        solving for the pendulum motion and animates them.
+    '''
+    # convert values from polar to cartesian coordinates
+    x, y = length*np.sin(res1.y[0]), -length*np.cos(res1.y[0])
+    x2, y2 = length*np.sin(res2), -length*np.cos(res2)
+
+    fig, ax = plt.subplots()
+    line, = plt.plot([0,x[0]], [0, y[0]], label='real')
+    point, = plt.plot([],[], 'ro')
+    line2, = plt.plot([0,x2[0]], [0, y2[0]], '--', label='simple')
+    point2, = plt.plot([],[], 'bo')
+    plt.xlim(-length-length/3,length)
+    plt.ylim(-length-length/3,length)
+    plt.legend()
+    plt.xlabel('horizontal position (m)')
+    plt.ylabel('vertical position (m)')
+    plt.title('Compare motion of simple harmonic oscillator and an actual pendulum')
+    
+    # returns each frame of animation
+    def animate(frames):
+        line.set_data([0, x[frames]], [0, y[frames]])
+        point.set_data(x[frames], y[frames])
+        line2.set_data([0, x2[frames]], [0, y2[frames]])
+        point2.set_data(x2[frames], y2[frames])
+        return line, point, line2, point2,
+    
+    # gets animation and seperates frames by interval in milliseconds, 
+    # blit keeps background constant to save resources
+    myAnimation = animation.FuncAnimation(fig, animate, frames=np.arange(0, len(y)-1), \
+                                      interval=1/60*1000, blit=True, repeat=False)
+    
+    # show animation and calculate run time
+    begin = time.time()
     plt.show()
-
+    print(time.time()-begin)
+    
 if __name__ == '__main__':
-    pendulum(damp = 0.2, wZero = 50, timeSpan=100)
-    pass
+    pendulum(damp = 0.2, wZero = 0, thetaZero=50, length=0.1)
+    # pendulum()
+    # pendulum(thetaZero=179.99, damp=0.2, timeSpan=20, wZero=0)
