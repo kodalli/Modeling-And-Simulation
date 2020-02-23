@@ -87,5 +87,5 @@ def table2Latex(fileName='input_latex_table.txt', fileOut='output_latex_table.tx
 
 
 if __name__ == '__main__':
-    table2Latex(fileName=r'CBE\CBE\UnitOps\input_latex_table.txt',
-                fileOut=r'CBE\CBE\UnitOps\output_latex_table.txt')
+    table2Latex(fileName=r'input_latex_table.txt',
+                fileOut=r'output_latex_table.txt')
