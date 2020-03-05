@@ -1,5 +1,6 @@
 from scipy.optimize import fmin 
 import numpy as np  
+import matplotlib.pyplot as plt 
 
 V = 5*3785.41 # volume ml
 A = 2500 # area cm^2
@@ -18,5 +19,6 @@ def f(Deff):
     return diffsum
 
 Deff = fmin(f, 0.5)
-
+plt.plot(time, cl2pred, time, cl2exp)
+plt.show()
 print(Deff)
