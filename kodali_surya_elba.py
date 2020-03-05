@@ -327,4 +327,6 @@ if __name__ == '__main__':
     # elba(nY0=(27200, 0, 0), nE0=(4800-4002, 4000, 2), nV0=15000, timeSpan=120, nMax=2e6, nRun=50)
     elba(nY0=(27199-20000, 20000, 1), nE0=(4800, 0, 0),
          nV0=5000, timeSpan=120, nMax=2e6, nRun=10)
+    # elba(nY0=(yh, yf, 1), nE0=(eh, ef, 0), nV0=20000, timeSpan=120, nMax=2e6, nRun=50)
+    # elba(nY0=(27200, 0, 0), nE0=(4800-4002, 4000, 2), nV0=15000, timeSpan=120, nMax=2e6, nRun=50)
     pass
