@@ -4,7 +4,8 @@
     Date: 3/6/2020
     Additional help: numpy documentation and stackoverflow
     Description: This program determines which of the three dunces in russian roulette
-    like scenario will win based on their shot accuracy and best strategy.
+    like scenario will win based on their shot accuracy and best strategy and using
+    a stochastic approach to probability.
     ___________________________________________________________________________________
 '''
 
@@ -27,8 +28,13 @@ class Cowboy:
         return np.random.binomial(1, self.skill)
 
 
-def p6(nsteps=1000):
+def p6(nsteps=10000):
     '''
+        p6 can be called with default parameters.
+        nsteps is the number of simulations to perform.
+        p6 will print out the wins and probability of 
+        winning for each cowboy.
+
         Smithers, Johnson, and Flynn
         Optimal strategy: 
         Smithers will always try to shoot Johnson then Flynn.
@@ -82,5 +88,5 @@ def p6(nsteps=1000):
 
 
 if __name__ == '__main__':
-    p6(nsteps=10000)
+    p6()
     pass
