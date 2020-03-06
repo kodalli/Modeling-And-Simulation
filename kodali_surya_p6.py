@@ -1,63 +1,86 @@
-import numpy as np 
+''' ___________________________________________________________________________________
+    ModSim 5790 P6: The three dunces
+    Created by: Surya Kodali
+    Date: 3/6/2020
+    Additional help: numpy documentation and stackoverflow
+    Description: This program determines which of the three dunces in russian roulette
+    like scenario will win based on their shot accuracy and best strategy.
+    ___________________________________________________________________________________
+'''
 
-def p6(nsteps=10000):
+import numpy as np
+
+
+class Cowboy:
+    # Each cowboy is stored as an object with their accuracy, wins, and alive status
+    def __init__(self, skill=0, wins=0, alive=False):
+        self.skill = skill
+        self.wins = wins
+        self.alive = alive
+
+    # Kills cowboy
+    def kill(self):
+        self.alive = False
+
+    # Returns true if the shot taken killed the target
+    def takeshot(self):
+        return np.random.binomial(1, self.skill)
+
+
+def p6(nsteps=1000):
     '''
         Smithers, Johnson, and Flynn
         Optimal strategy: 
-            Smithers: will always try to shoot Johnson then Flynn
-            Johnson: will always try to shoot Smithers then Flynn
-            Flynn: will always try to not shoot anyone then attempt to shoot whoevers
-            left. He hopes that the other two will shoot each other first.
+        Smithers will always try to shoot Johnson then Flynn.
+        Johnson will always try to shoot Smithers then Flynn.
+        Flynn will always try to not shoot anyone then attempt to shoot whoevers
+        left. He hopes that the other two will shoot each other first.
     '''
-    cowboys = ['Smithers', 'Johnson', 'Flynn']
-    accuracy = {'Smithers':0.9, 'Johnson':0.8, 'Flynn':0.5}
-    wins = {'Smithers':0, 'Johnson':0, 'Flynn':0}
-    
+    Smithers = Cowboy(0.9, 0, True)
+    Johnson = Cowboy(0.8, 0, True)
+    Flynn = Cowboy(0.5, 0, True)
+    trio = [Smithers, Johnson, Flynn]
     for _ in range(nsteps):
-        alive = {'Smithers':True, 'Johnson':True, 'Flynn':True}
-        
-        while(sum(alive.values()) > 1):
-            # draw lots
-            np.random.shuffle(cowboys) 
-            for person in cowboys:
-                # strategies for each cowboy
-                if (alive[person] and person == 'Smithers'):
-                    if(np.random.binomial(1, accuracy[person])):
-                        # Smithers shoots Johnson first and then Flynn 
-                        if(alive['Johnson']):
-                                alive['Johnson'] = False   
-                        elif(alive['Flynn']):
-                                alive['Flynn'] = False
-                            
-                elif (alive[person] and person == 'Johnson'):
-                    if(np.random.binomial(1, accuracy[person])):
-                        # Johnson shoots Smithers first and then Flynn 
-                        if(alive['Smithers']):
-                                alive['Smithers'] = False   
-                        elif(alive['Flynn']):
-                                alive['Flynn'] = False
-                            
-                elif (alive[person] and person == 'Flynn'):
-                    # Flynn tries not to shoot anyone if they're both alive
-                    if(alive['Smithers'] and alive['Johnson']):
-                        continue  
-                    # Once one of them dies Flynn attempts to shoot whoever is left 
-                    else:
-                        if(np.random.binomial(1, accuracy[person])):
-                            if(alive['Smithers']):
-                                alive['Smithers'] = False
-                            elif(alive['Johnson']):
-                                alive['Johnson'] = False
-        for person in (cowboys):
-            if (alive[person]):
-                wins[person]+=1
-                
-    print ('Cowboy wins:', wins)
-    probwin = {'Smithers':wins['Smithers']/nsteps, 
-               'Johnson':wins['Johnson']/nsteps, 'Flynn':wins['Flynn']/nsteps}
-    print('Cowboy probability of winning:', probwin)
-    return 
+        Flynn.alive, Johnson.alive, Smithers.alive = 1, 1, 1
+
+        while(sum([person.alive for person in trio]) > 1):
+            # "Draw Lots"
+            np.random.shuffle(trio)
+
+            for person in trio:
+                # Smithers strategy
+                if(person.alive and person is Smithers and person.takeshot()):
+                    if(Johnson.alive):
+                        Johnson.kill()
+                    elif(Flynn.alive):
+                        Flynn.kill()
+                # Johnson strategy
+                if(person.alive and person is Johnson and person.takeshot()):
+                    if(Smithers.alive):
+                        Smithers.kill()
+                    elif(Flynn.alive):
+                        Flynn.kill()
+                # Flynn strategy
+                elif(person.alive and person is Flynn):
+                    if(Smithers.alive and Johnson.alive):
+                        # Don't shoot anyone
+                        continue
+                    elif(Smithers.alive and person.takeshot()):
+                        Smithers.kill()
+                    elif(Johnson.alive and person.takeshot()):
+                        Johnson.kill()
+        # Count wins for each player
+        for person in trio:
+            if(person.alive):
+                person.wins += 1
+
+    print('Smithers:', Smithers.wins, 'Johnson:',
+          Johnson.wins, 'Flynn:', Flynn.wins)
+    print('Smithers:', Smithers.wins/nsteps, 'Johnson:',
+          Johnson.wins/nsteps, 'Flynn:', Flynn.wins/nsteps)
+    return
+
 
 if __name__ == '__main__':
-    p6()
-    pass 
+    p6(nsteps=10000)
+    pass
