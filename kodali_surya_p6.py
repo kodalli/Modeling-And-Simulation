@@ -88,5 +88,5 @@ def p6(nsteps=10000):
 
 
 if __name__ == '__main__':
-    p6()
+    # p6()
     pass
