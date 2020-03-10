@@ -11,6 +11,8 @@ import numpy as np
 import pandas as pd
 import random as rand
 import string
+from difflib import SequenceMatcher
+import jellyfish
 
 # Path to be read
 file_name = r'CBE\English_words.csv'
@@ -22,12 +24,14 @@ word = tuple(engWords.loc[:, 'Word'])
 pos = tuple(engWords.loc[:, 'Part of speech'])
 freq = tuple(engWords.loc[:, 'Frequency'])
 disp = tuple(engWords.loc[:, 'Dispersion'])
-char = string.ascii_letters + string.digits + string.punctuation + ' '
-
+char = string.ascii_letters + ':;,.?!\' '
+prob = [i/sum(freq) for i in freq]
 
 class Child:  # maybe linked list is better here
     # string object
-    def __init__(self, parent):
+    def __init__(self, parent=None):
+        if(parent is None):
+            parent = ''.join(rand.choice(char) for i in range(30))
         self.characters = parent
 
     def substitution(self, index=None, charin=None):
@@ -86,7 +90,7 @@ class Child:  # maybe linked list is better here
             self.insertion()
 
 
-def seqscore(inseq=None, score=None):
+def seqscore(inseq=None, score=0):
     '''
         inseq, type=string, string to be scored
         score, type=int or float, score for the input sequence
@@ -116,8 +120,26 @@ def seqscore(inseq=None, score=None):
 
     # separate string into words, do commas later
     temp_words = inseq.split(' ')
-    print(temp_words)
-
+    # compare similarity between the words in the string vs english words
+    part_of_speech = len(temp_words) * [None]
+    for i, item in enumerate(temp_words):
+        word_score = 0
+        if(len(item) < 4): 
+            fitness-=0.2
+        for j, compare in enumerate(word):
+            # s = SequenceMatcher(None, compare, item)
+            # new_word_score = s.ratio()
+            new_word_score = jellyfish.jaro_distance(compare, item)
+            if(new_word_score > word_score):
+                word_score = new_word_score
+                part_of_speech[i] = pos[j]
+        #print(item, word_score)
+        fitness += word_score
+    if('v' in part_of_speech):
+        fitness+=0.5
+        if('n' or 'p' in part_of_speech):
+            fitness+=0.25
+    #print(part_of_speech)
     return fitness
 
 
@@ -136,18 +158,28 @@ def evolver(parent='Beware of ManBearPig!', ngen=1000, nChildren=20, mutationPro
                 generation as the simulation runs; if False, program runs silent. 
 
     '''
-    children = []
-    scores = []
-    for i in range(nChildren):
-        children.append(Child(parent))
-        scores.append(seqscore(children[i].characters))
-    print(scores)
-    survivor = ''
+    children = [Child(parent) for _ in range(nChildren)]
+    for i in children:
+        i.mutate(mutationProbs)
+    scores = np.array([seqscore(i.characters) for i in children])
+    index = np.argmax(scores)
+    # print('scores:', scores)
+    # print(index)
+    survivor = children[index].characters
+    
+    for _ in range(ngen-1):
+        for i in range(nChildren):
+            children[i].characters = survivor
+            children[i].mutate(mutationProbs)
+            scores[i] = seqscore(children[i].characters)
+        index = np.argmax(scores)
+        survivor = children[index].characters
+        
     return survivor
 
 
 if __name__ == '__main__':
-    evolver()
+    print(evolver(parent=None, ngen=500, mutationProbs=(0.1, 0.05, 0.05)))
     # print(mystr.characters)
     # for i in range(50):
     #     mystr.mutate((0.5,0.5,0.5))
