@@ -15,7 +15,7 @@ from difflib import SequenceMatcher
 import jellyfish
 
 # Path to be read
-file_name = r'CBE\English_words.csv'
+file_name = r'English_words.csv'
 # open csv file
 engWords = pd.read_csv(file_name)
 # store each column as a tuple
@@ -27,11 +27,12 @@ disp = tuple(engWords.loc[:, 'Dispersion'])
 char = string.ascii_letters + ':;,.?!\' '
 prob = [i/sum(freq) for i in freq]
 
+
 class Child:  # maybe linked list is better here
     # string object
     def __init__(self, parent=None):
         if(parent is None):
-            parent = ''.join(rand.choice(char) for i in range(30))
+            parent = ''.join(rand.choice(char) for i in range(45))
         self.characters = parent
 
     def substitution(self, index=None, charin=None):
@@ -53,6 +54,8 @@ class Child:  # maybe linked list is better here
     def deletion(self, index=None):
         # deletion mutation, remove a character
         size = len(self.characters)
+        # if(size < 35):
+        #     return
         if(index is None):
             index = rand.randint(0, size)
         # perform deletion
@@ -67,6 +70,8 @@ class Child:  # maybe linked list is better here
     def insertion(self, index=None, charin=None):
         # insertion mutation, add in a character before index
         size = len(self.characters)
+        # if(size > 55):
+        #     return
         if(index is None):
             index = rand.randint(0, size+1)
         if(charin is None):
@@ -121,11 +126,17 @@ def seqscore(inseq=None, score=0):
     # separate string into words, do commas later
     temp_words = inseq.split(' ')
     # compare similarity between the words in the string vs english words
-    part_of_speech = len(temp_words) * [None]
+    word_len = len(temp_words)
+    part_of_speech = word_len * [None]
     for i, item in enumerate(temp_words):
         word_score = 0
-        if(len(item) < 4): 
-            fitness-=0.2
+        length = len(item)
+        if(length < 2):
+            fitness -= 6
+        if(length < 5):
+            fitness -= 3
+        else:
+            fitness += 6
         for j, compare in enumerate(word):
             # s = SequenceMatcher(None, compare, item)
             # new_word_score = s.ratio()
@@ -134,12 +145,18 @@ def seqscore(inseq=None, score=0):
                 word_score = new_word_score
                 part_of_speech[i] = pos[j]
         #print(item, word_score)
-        fitness += word_score
+        fitness += 10*word_score
     if('v' in part_of_speech):
-        fitness+=0.5
-        if('n' or 'p' in part_of_speech):
-            fitness+=0.25
-    #print(part_of_speech)
+        fitness += 0.25
+        if('n' in part_of_speech):
+            fitness += 0.5
+            if(part_of_speech.index('n') < part_of_speech.index('v')):
+                fitness += 1
+        if('p' in part_of_speech):
+            fitness += 0.5
+            if(part_of_speech.index('p') < part_of_speech.index('v')):
+                fitness += 1
+    # print(part_of_speech)
     return fitness
 
 
@@ -166,20 +183,21 @@ def evolver(parent='Beware of ManBearPig!', ngen=1000, nChildren=20, mutationPro
     # print('scores:', scores)
     # print(index)
     survivor = children[index].characters
-    
-    for _ in range(ngen-1):
+    print('gen: 1', survivor)
+    for gen in range(ngen-1):
         for i in range(nChildren):
             children[i].characters = survivor
             children[i].mutate(mutationProbs)
             scores[i] = seqscore(children[i].characters)
         index = np.argmax(scores)
         survivor = children[index].characters
-        
+        print('gen:', gen+2, survivor)
+
     return survivor
 
 
 if __name__ == '__main__':
-    print(evolver(parent=None, ngen=500, mutationProbs=(0.1, 0.05, 0.05)))
+    evolver(parent=None, mutationProbs=(0.2, 0.2, 0.2), ngen=1000)
     # print(mystr.characters)
     # for i in range(50):
     #     mystr.mutate((0.5,0.5,0.5))
