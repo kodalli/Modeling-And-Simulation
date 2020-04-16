@@ -28,14 +28,12 @@ import numpy as np
 
 
 def f(p):
-    a, b, c = p
+    t = p
+    ho = 0.026/(1+2*t)*0.26*((1+2*t)/(1.8e-5 / 1.16))**0.6 * 0.72**0.37
     return(
-        a + b + c - 1,
-        a**2 + b**2 + c**2 - 2,
-        a**3 + b**3 + c**3 - 3
+        -1/1.18 + 1/22 + 1/0.2 * np.log(1+2*t) + 1/(1+2*t)*1/ho
     )
 
 
-a, b, c = fsolve(f, (1, 1, 1))
-print(a**5 + b**5 + c**5)
-print(a, b, c)
+t = fsolve(f, (0.00001))
+print(t)
