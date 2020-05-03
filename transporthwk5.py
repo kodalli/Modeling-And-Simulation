@@ -28,12 +28,13 @@ import numpy as np
 
 
 def f(p):
-    t = p
-    ho = 0.026/(1+2*t)*0.26*((1+2*t)/(1.8e-5 / 1.16))**0.6 * 0.72**0.37
+    q, Tc, Th = p
     return(
-        -1/1.18 + 1/22 + 1/0.2 * np.log(1+2*t) + 1/(1+2*t)*1/ho
+        2.50*1000*(200-Th)-q,
+        1.25*4000*(15-Tc)-q,
+        200*25*(200-Th-15+Tc)/(np.log((200-Th)/(15-Tc)))-q
     )
 
 
-t = fsolve(f, (0.00001))
-print(t)
+q, Tc, Th = fsolve(f, (200000, 100, 10))
+print(q, Tc, Th)
