@@ -125,8 +125,7 @@ class Maze:
 
 def final(N=30, colormap='binary', start=None, realTime=True):
     """
-        This program makes generates mazes using random walk cycles that may
-        or may not be solvable.
+        This program makes generates mazes using random walk cycles.
         Parameters:
             N: integer that gives the square grid size for the maze
             colormap: supports the matplotlib colormaps to make the maze customizable
